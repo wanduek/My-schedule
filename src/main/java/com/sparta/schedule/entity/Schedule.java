@@ -23,14 +23,14 @@ public class Schedule {
     // ScheduleRequestDto를 기반으로 Schedule 객체 생성
     public Schedule(ScheduleRequestDto requestDto) {
         this.work = requestDto.getWork();
-        this.teacher = requestDto.getTeacherId(); // teacherId로 수정
+        this.teacher = requestDto.getTeacher_Id(); // teacherId로 수정
         this.password = requestDto.getPassword();
     }
 
     // ScheduleRequestDto를 기반으로 Schedule 객체 업데이트
     public void update(ScheduleRequestDto requestDto) {
         this.work = requestDto.getWork();
-        this.teacher = requestDto.getTeacherId(); // teacherId로 수정
+        this.teacher = requestDto.getTeacher_Id(); // teacherId로 수정
         this.password = requestDto.getPassword();
     }
 }

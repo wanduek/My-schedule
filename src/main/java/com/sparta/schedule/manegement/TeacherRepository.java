@@ -29,9 +29,17 @@ public class TeacherRepository {
         }
     }
 
-    public void save(Teacher teacher){
+    public Teacher save(Teacher teacher){
         String sql = "INSERT INTO teacher (name, email, createdDate, updatedDate) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, teacher.getName(), teacher.getEmail(), teacher.getCreatedDate(), teacher.getUpdatedDate());
+        return teacher;
+    }
+
+    public boolean existsById(Long id) {
+        return false;
+    }
+
+    public void deleteById(Long id) {
     }
 
     private static class TeacherRowMapper implements RowMapper<Teacher>{

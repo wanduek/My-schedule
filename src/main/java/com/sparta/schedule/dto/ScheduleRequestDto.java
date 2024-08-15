@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ScheduleRequestDto {
     private String work;
-    private Integer teacherId;
+    private Integer teacher_Id;
     private Integer password;
     private LocalDateTime createdDatetime;
     private LocalDateTime updatedDatetime;

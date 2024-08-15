@@ -1,7 +1,6 @@
 package com.sparta.schedule.dto;
 
 import com.sparta.schedule.entity.Schedule;
-import com.sparta.schedule.entity.Teacher;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +17,7 @@ public class ScheduleResponseDto {
     private LocalDateTime updatedDatetime; // 변환된 updatedDate 필드
 
     // Schedule 엔티티를 기반으로 DTO를 생성
-    public ScheduleResponseDto(Schedule schedule, Teacher teacher) {
+    public ScheduleResponseDto(Schedule schedule) {
         this.schedule_id = schedule.getSchedule_id();
         this.work = schedule.getWork();
         this.teacherId = schedule.getTeacher();
