@@ -18,6 +18,7 @@ public class Schedule {
     private Integer password;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+    private int schedule_id;
 
     public Schedule(ScheduleRequestDto requestDto) {
         this.work = requestDto.getWork();

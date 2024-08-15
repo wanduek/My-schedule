@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -37,21 +38,21 @@ public class ScheduleController {
         // DB 저장
         KeyHolder keyHolder = new GeneratedKeyHolder(); // 기본 키를 반환받기 위한 객체
 
-        String sql = "INSERT INTO schedule (teacher, password, work, createdDate, updatedDate) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO schedule (work, password, teacher, createdDate, updatedDate) VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, schedule.getTeacher());
+            preparedStatement.setString(1, schedule.getWork());
             preparedStatement.setInt(2, schedule.getPassword());
-            preparedStatement.setString(3, schedule.getWork()); // `work` 필드 설정
+            preparedStatement.setString(3, schedule.getTeacher()); // `work` 필드 설정
             preparedStatement.setObject(4, now); // createdDate와 updatedDate는 현재시간에 설정
             preparedStatement.setObject(5, now);
             return preparedStatement;
         }, keyHolder);
 
         // DB Insert 후 받아온 기본키 확인
-        String work = keyHolder.getKey().toString(); // `work`는 String이므로 직접 변환
-        schedule.setWork(work); // Assuming you have a method to set the ID
-
+//        int schedule_id = (int) keyHolder.getKey();
+//        schedule.setSchedule_id(schedule_id);
+        schedule.setSchedule_id(Objects.requireNonNull(keyHolder.getKey()).intValue());
         // Entity -> ResponseDto
         ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule);
 
@@ -77,10 +78,18 @@ public class ScheduleController {
     public String updateSchedule(@PathVariable String scheduleId, @RequestBody ScheduleRequestDto requestDto) {
         // 해당 스케줄이 DB에 존재하는지 확인
         Schedule schedule = findByWork(scheduleId);
+
+        //비밀번호가 올바른지 확인
+        if(!schedule.getPassword().equals(requestDto.getPassword())){
+            throw new IllegalArgumentException("비밀번호가 올바릅니다.");
+        }
+
         if (schedule != null) {
-            // schedule 내용 수정
-            String sql = "UPDATE schedule SET teacher = ?, password = ? ,updatedDate = ?, work = ? ORDER BY updatedDate DESC";
-            jdbcTemplate.update(sql, requestDto.getTeacher(), requestDto.getPassword(), requestDto.getUpdatedDatetime(), scheduleId);
+            // schedule 내용 수정)
+
+            //스케줄 내용 수정
+            String sql = "UPDATE schedule SET teacher = ?, password = ? ,updatedDate = ?, work = ? where schedule_id = ?";
+            jdbcTemplate.update(sql, requestDto.getTeacher(), requestDto.getPassword(), LocalDateTime.now(), scheduleId);
 
             return scheduleId;
         } else {
@@ -93,7 +102,7 @@ public class ScheduleController {
         Schedule schedule = findByWork(scheduleId);
         if (schedule != null) {
             // schedule 삭제
-            String sql = "DELETE FROM schedule WHERE work = ?";
+            String sql = "DELETE FROM schedule WHERE schedule_id = ?";
             jdbcTemplate.update(sql, scheduleId);
 
             return scheduleId;
@@ -102,15 +111,20 @@ public class ScheduleController {
         }
     }
 
-    private Schedule findByWork(String work) {
+    private Schedule findByWork(int schedule_id) {
         String sql = "SELECT * FROM schedule WHERE work = ?";
 
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
-            Schedule schedule = new Schedule();
-            schedule.setWork(rs.getString("work"));
-            schedule.setTeacher(rs.getString("teacher"));
-            schedule.setPassword(rs.getInt("password"));
-            return schedule;
-        }, work);
+        try {
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+                Schedule schedule = new Schedule();
+                schedule.setWork(rs.getString("work"));
+                schedule.setTeacher(rs.getString("teacher"));
+                schedule.setPassword(rs.getInt("password"));
+                return schedule;
+            }, schedule_id);
+        }catch (Exception e){
+            return null; //레코드가 없는 경우 처리
+        }
     }
+
 }

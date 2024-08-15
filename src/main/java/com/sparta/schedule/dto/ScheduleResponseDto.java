@@ -2,10 +2,14 @@ package com.sparta.schedule.dto;
 
 import com.sparta.schedule.entity.Schedule;
 import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 public class ScheduleResponseDto {
+    private int schedule_id;
     private String work;
     private String teacher;
     private Integer password;
@@ -16,6 +20,7 @@ public class ScheduleResponseDto {
         this.work = schedule.getWork();
         this.teacher = schedule.getTeacher();
         this.password = schedule.getPassword();
+        this.schedule_id = schedule.getSchedule_id();
     }
 
     public ScheduleResponseDto(String work, String teacher, Integer password) {
