@@ -9,7 +9,7 @@ CRUD구현이 목적인 프로젝트
 ## API 명세서
   
 </pre>
-![스크린샷 2024-08-16 오전 1 41 33](https://github.com/user-attachments/assets/13a67490-b010-490f-a363-21ed81dea19d)
+<img width="773" alt="스크린샷 2024-08-16 오전 9 10 18" src="https://github.com/user-attachments/assets/6f79d475-953c-4a30-8337-6247f4a64e27">
 
 <pre>
   
@@ -17,4 +17,4 @@ CRUD구현이 목적인 프로젝트
   
 </pre>
 
-![스크린샷 2024-08-16 오전 1 43 25](https://github.com/user-attachments/assets/58e3c7bd-991c-4653-9883-48284e7a07aa)
+![스크린샷 2024-08-16 오전 9 08 38](https://github.com/user-attachments/assets/5c4ef339-1a71-41ca-b915-f0e41bb7d572)
