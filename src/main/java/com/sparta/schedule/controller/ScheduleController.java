@@ -118,17 +118,15 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/schedules/{scheduleId}")
-    public Schedule deleteSchedule(@PathVariable int scheduleId) {
+    public Schedule deleteSchedule(@PathVariable int scheduleId, @RequestParam int password) {
         Schedule schedule = findByScheduleId(scheduleId);
-        if (schedule != null) {
+
             // schedule 삭제
             String sql = "DELETE FROM schedule WHERE schedule_id AND password = ?";
-            jdbcTemplate.update(sql, scheduleId);
+            jdbcTemplate.update(sql, scheduleId, password);
 
-            return findByScheduleId(scheduleId);
-        } else {
-            throw new IllegalArgumentException("선택한 일정은 존재하지 않습니다.");
-        }
+            return null;
+
     }
 
     public Schedule findByScheduleId(@RequestParam int scheduleId) {
