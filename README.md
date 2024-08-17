@@ -1,6 +1,7 @@
 # 일정 관리 시스템
 
-기능구현
+#기능구현
+
 일정 등록(createSchedule)
 
 일정 조회(getSchedule)
