@@ -4,7 +4,7 @@ import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.entity.Teacher;
-import com.sparta.schedule.manegement.TeacherRepository;
+import com.sparta.schedule.management.TeacherRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -21,7 +21,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class ScheduleController {
 
-    private final JdbcTemplate jdbcTemplate;
+    public JdbcTemplate jdbcTemplate;
     private final TeacherRepository teacherRepository;
 
     public ScheduleController(JdbcTemplate jdbcTemplate, TeacherRepository teacherRepository) {
@@ -78,26 +78,29 @@ public class ScheduleController {
         String sql = "SELECT s.schedule_id, s.work, s.password, s.createdDate, s.updatedDate, t.id AS teacher_id, t.name AS teacher_name, t.email AS teacher_email "
                 + "FROM schedule s JOIN teacher t ON s.teacher_id = t.id "
                 + "ORDER BY s.updatedDate DESC";
+        try {
+            List<ScheduleResponseDto> query = jdbcTemplate.query(sql, (rs, rowNum) -> {
+                Schedule schedule = new Schedule();
+                schedule.setId(rs.getInt("schedule_id"));
+                schedule.setWork(rs.getString("work"));
+                schedule.setPassword(rs.getInt("password"));
+                schedule.setCreatedDate(rs.getObject("createdDate", LocalDateTime.class));
+                schedule.setUpdatedDate(rs.getObject("updatedDate", LocalDateTime.class));
 
-        List<ScheduleResponseDto> query = jdbcTemplate.query(sql, (rs, rowNum) -> {
-            Schedule schedule = new Schedule();
-            schedule.setId(rs.getInt("schedule_id"));
-            schedule.setWork(rs.getString("work"));
-            schedule.setPassword(rs.getInt("password"));
-            schedule.setCreatedDate(rs.getObject("createdDate", LocalDateTime.class));
-            schedule.setUpdatedDate(rs.getObject("updatedDate", LocalDateTime.class));
+                Teacher teacher = new Teacher();
+                teacher.setId(rs.getInt("teacher_id")); // 수정된 필드 이름 사용
+                teacher.setName(rs.getString("teacher_name")); // 수정된 필드 이름 사용
+                teacher.setEmail(rs.getString("teacher_email")); // 수정된 필드 이름 사용
 
-            Teacher teacher = new Teacher();
-            teacher.setId(rs.getInt("teacher_id")); // 수정된 필드 이름 사용
-            teacher.setName(rs.getString("teacher_name")); // 수정된 필드 이름 사용
-            teacher.setEmail(rs.getString("teacher_email")); // 수정된 필드 이름 사용
+                schedule.setTeacher(teacher.getId());
+                return new ScheduleResponseDto(schedule);
+            });
+            return query;
 
-            schedule.setTeacher(teacher.getId());
+        }catch (Exception e){
+                throw new RuntimeException("일정을 찾을 수 없습니다", e);
+            }
 
-            return new ScheduleResponseDto(schedule);
-        });
-
-        return query;
     }
 
     @PutMapping("/schedules/{scheduleId}")
@@ -120,13 +123,22 @@ public class ScheduleController {
     @DeleteMapping("/schedules/{scheduleId}")
     public Schedule deleteSchedule(@PathVariable int scheduleId, @RequestParam int password) {
         Schedule schedule = findByScheduleId(scheduleId);
-
-            // schedule 삭제
-            String sql = "DELETE FROM schedule WHERE schedule_id AND password = ?";
-            jdbcTemplate.update(sql, scheduleId, password);
-
-            return null;
-
+            if(schedule == null){
+                System.out.println("schedule_Id 불일치");
+            }
+            if(schedule.getPassword() != password){
+                System.out.println("비밀번호가 틀립니다.");
+                return null;
+            }
+            try {
+                // schedule 삭제
+                String sql = "DELETE FROM schedule WHERE schedule_id AND password = ?";
+                jdbcTemplate.update(sql, scheduleId, password);
+            }catch (Exception e) {
+                System.out.println("삭제 완료"+e.getMessage());
+                return null;
+            }
+        return schedule;
     }
 
     public Schedule findByScheduleId(@RequestParam int scheduleId) {

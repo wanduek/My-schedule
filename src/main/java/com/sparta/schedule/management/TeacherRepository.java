@@ -1,4 +1,4 @@
-package com.sparta.schedule.manegement;
+package com.sparta.schedule.management;
 
 import com.sparta.schedule.entity.Teacher;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,8 +39,7 @@ public class TeacherRepository {
         return false;
     }
 
-    public void deleteById(Long id) {
-    }
+
 
     private static class TeacherRowMapper implements RowMapper<Teacher>{
         @Override
