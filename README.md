@@ -1,6 +1,18 @@
 # 일정 관리 시스템
 
-기능: 일정 등록, 조회, 수정, 삭제, 담당자 등록, 삭제
+기능구현
+일정 등록(createSchedule)
+
+일정 조회(getSchedule)
+
+일정 수정(updateSchedule)
+
+일정 삭제(deleteSchedule)
+
+담당자 등록(createTeacher)
+
+담당자 삭제(deleteTeacher)
+
 
 CRUD구현이 목적인 프로젝트
 
